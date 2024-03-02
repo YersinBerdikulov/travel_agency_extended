@@ -18,29 +18,30 @@ This is a travel agency website for a fictional travel agency. The website allow
 
 ### Installation
 <ul>
-    <li>
-    1. Clone the repository:
-        <li>
-        ```bash
-        git clone https://github.com/YersinBerdikulov/travel_agency_extended.git
-        ```
-        </li>
-    </li>
+<li>
 
-    <li>
-        2. Navigate to the project directory:
-        ```bash
-            cd travel_agency_extended
-        ```
-    </li>
-    <li>
-        3. Install the dependencies:
+1. Clone the repository:
+```bash
+git clone https://github.com/YersinBerdikulov/travel_agency_extended.git
+```
+</li>
+<li>
 
-            ```bash
-            npm install
-            ```
-    </li>
+2. Navigate to the project directory:
+```bash
+    cd travel_agency_extended
+```
+</li>
+<li>
+
+3. Install the dependencies:
+
+```bash
+npm install
+```
+</li>
 </ul>
+
 
 ### How to run
 
