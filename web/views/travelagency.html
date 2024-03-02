@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel Agency</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css">
+    <script src="/routes/travelRoutes.js"></script>
+
+    <style>
+        /* Additional styles for icons and images */
+        .weather-icon {
+            width: 50px;
+            height: 50px;
+        }
+
+        .text-container {
+            flex: 1;
+            padding-right: 20px;
+            /* Adjust as needed to create space between text and image */
+        }
+
+        .weather-info i {
+            font-size: 2em;
+            margin-right: 10px;
+        }
+
+        .city-image {
+            max-width: 30%;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .city-image-container {
+            text-align: center;
+        }
+
+        .city-image-error {
+            font-size: 2em;
+            color: #ccc;
+        }
+
+        .city-image:hover {
+            transform: scale(1.1);
+        }
+
+        /* Additional styles for tours */
+        .tour {
+            display: flex;
+            align-items: center;
+            /* Center items vertically */
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+            margin-top: 20px;
+            padding: 20px;
+        }
+
+        .tour-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .tour-price {
+            font-size: 1.2em;
+            color: #007bff;
+        }
+
+        .tour-info {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="bg-indigo-500 p-4 flex justify-between items-center">
+        <div class="flex items-center"> 
+          <img src="/images/logo.png" class="h-8 w-8 mx-4" alt="Logo">
+          <a href="/" class="text-white font-bold text-2xl">Travel Agency</a>
+        </div>
+      
+        <div class="text-white">
+          <a href="/" class="px-4 hover:underline">Home</a>
+          <a href="/travelagency" class="px-4 hover:underline">Travel </a>
+          
+          <button class="btn btn-primary ml-4" onclick="viewHistory()">View History</button>  
+          <a href="/logout" class="px-4 hover:underline">Logout</a>
+        </div>
+      </nav>
+
+    <div class="modal fade" id="historyModal" tabindex="-1" role="dialog" aria-labelledby="historyModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="historyModalLabel">History</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="historyModalBody">
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mt-5">
+        <div class="card">
+            <div class="card-body">
+                <h1 class="card-title">Explore Our Tours</h1>
+                <p class="card-text">Choose from a variety of destinations and plan your perfect getaway.</p>
+
+
+                <form id="travelAgencyForm">
+                    <div class="form-group">
+                        <label for="cityDropdown">Select City:</label>
+                        <select id="cityDropdown" class="form-control" onchange="showTour()">
+                            <option value="Astana">Astana</option>
+                            <option value="London">London</option>
+                            <option value="New York">New York</option>
+                            <option value="Tokyo">Tokyo</option>
+                            <option value="Sydney">Sydney</option>
+                        </select>
+                    </div>
+
+                </form>
+
+                <div class="mt-4" id="weather-info" style="display: none;">
+                    <h2>Weather Information</h2>
+                    <div class="weather-info">
+                        <p><i class="fas fa-thermometer-half"></i> Temperature: <span
+                                id="weather-temperature"></span>&deg;C</p>
+                        <p><i class="fas fa-cloud"></i> Weather Conditions: <span id="weather-conditions"></span></p>
+                    </div>
+                </div>
+
+                <div class="tours-container mt-4">
+
+                </div>
+
+                <div class="modal fade" id="bookingModal" tabindex="-1" role="dialog"
+                    aria-labelledby="bookingModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="bookingModalLabel">Book Now</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form>
+                                    <div class="form-group">
+                                        <label for="adultsQuantity">Number of Adults:</label>
+                                        <input type="number" class="form-control" id="adultsQuantity" min="0" value="0"
+                                            oninput="updateTotalPrice()" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="childrenQuantity">Number of Children:</label>
+                                        <input type="number" class="form-control" id="childrenQuantity" min="0"
+                                            value="0" oninput="updateTotalPrice()" required>
+                                    </div>
+                                    <label for="departureDate">Departure Date:</label>
+                                    <input type="date" class="form-control" id="departureDate" name="departureDate"
+                                        required>
+                                    <br>
+                                    <label for="phoneNumber">Phone Number:</label>
+                                    <input type="tel" class="form-control" id="phoneNumber" name="phoneNumber" required>
+
+                                </form>
+                                <hr>
+                                <p>Total Price: <span id="totalPrice"></span></p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary" onclick="confirmBooking()">Confirm
+                                    Booking</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-indigo-800 text-white">
+
+        <div class="container mx-auto px-6 py-12">
+      
+          <div class="md:flex md:justify-between">
+            <div class="mb-6 md:mb-0">
+              <h4 class="text-xl font-bold mb-6 text-indigo-200">Travel Agency</h4>
+              <p class="text-indigo-400">Plan your dream vacation with us!</p>
+            </div>
+      
+            <div class="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-3">
+              <div>
+                <h4 class="text-xl font-bold mb-6">About</h4>
+                <ul class="text-gray-400">
+                  <li class="mb-4 hover:underline"><a href="#">Company</a></li>
+                  <li class="mb-4 hover:underline"><a href="#">Careers</a></li>
+                  <li class="mb-4 hover:underline"><a href="#">News</a></li>
+                </ul>
+              </div>
+      
+              <div>
+                <h4 class="text-xl font-bold mb-6">Services</h4>
+                <ul class="text-gray-400">
+                  <li class="mb-4 hover:underline"><a href="#">Flights</a></li>
+                  <li class="mb-4 hover:underline"><a href="#">Hotels</a></li>
+                  <li class="mb-4 hover:underline"><a href="#">Transportation</a></li>
+                </ul>
+              </div>
+      
+              <div>
+                <h4 class="text-xl font-bold mb-6">Connect</h4>
+                <ul class="text-gray-400">
+                  <li class="mb-4 hover:underline"><a href="#">support@travelagency.com</a></li>
+                  <li class="mb-4 hover:underline"><a href="#">+1 234 567 8910</a></li>
+                  <li class="mb-4 hover:underline"><a href="#">Social media</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+      
+          <div class="border-t pt-6 border-indigo-700 pt-6">
+            <p class="text-gray-400">&copy; 2024 Travel Agency Website - Yersin Berdikulov [SE-2209]</p>
+          </div>
+      
+        </div>
+      
+      </footer>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>
